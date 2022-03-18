@@ -9,6 +9,7 @@ const Product = require('../models/product')
 router.get('/', (req, res, next) => {
     Order.find()
         .select('product _id quantity')
+        .populate('product','name')
         .exec()
         .then(doc => {
 
@@ -82,7 +83,9 @@ router.post('/', (req, res, next) => {
 });
 
 router.get('/:orderId', (req, res, next) => {
-    Order.findById(req.params.orderId).exec()
+    Order.findById(req.params.orderId)
+    .populate('product')
+    .exec()
     .then(order=>{
         if(!order){
             res.status(404).json({
