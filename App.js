@@ -4,6 +4,8 @@ const app = express();   //It will start the express  framework
 
 const morgan = require('morgan'); //http logger middleware
 
+
+
 const bodyParser = require('body-parser'); //It will help in request parsing
 
 const productRoutes = require('./api/routes/products');
@@ -14,12 +16,13 @@ const mongoose = require("mongoose");
 mongoose.connect('mongodb+srv://ashutosh:' +
     "qwerty1234" +
     '@cluster0.w984v.mongodb.net/mernstack?retryWrites=true&w=majority',
-  
+
 ).then(() => {
     console.log("Connection success")
 }).catch((err) => console.log("no connection " + err));
 
 app.use(morgan('dev'))
+app.use('/uploads', express.static('uploads'))
 app.use(bodyParser.urlencoded({ extended: false })); //type of  bodies we want to parse
 app.use(bodyParser.json()); //type of  bodies we want to parse
 
