@@ -4,12 +4,14 @@ const router = express.Router();
 const Order = require('../models/order')
 const mongoose = require("mongoose");
 const Product = require('../models/product')
+const checkAuth = require('../middleware/check-auth')
 
 
-router.get('/', (req, res, next) => {
+
+router.get('/', checkAuth, (req, res, next) => {
     Order.find()
         .select('product _id quantity')
-        .populate('product','name')
+        .populate('product', 'name')
         .exec()
         .then(doc => {
 
@@ -38,7 +40,7 @@ router.get('/', (req, res, next) => {
 
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', checkAuth, (req, res, next) => {
 
     Product.findById(req.body.productId)
         .then(product => {
@@ -50,7 +52,7 @@ router.post('/', (req, res, next) => {
             })
 
             return order.save()
-           
+
 
         })
         .then(result => {
@@ -82,55 +84,55 @@ router.post('/', (req, res, next) => {
 
 });
 
-router.get('/:orderId', (req, res, next) => {
+router.get('/:orderId', checkAuth, (req, res, next) => {
     Order.findById(req.params.orderId)
-    .populate('product')
-    .exec()
-    .then(order=>{
-        if(!order){
-            res.status(404).json({
-                message:'Order not found'
-            })
-        }
-        res.status(200).json({
-            order:order,
-            request: {
-                type: 'GET',
-                url: 'http://localhost:3000/orders/'
+        .populate('product')
+        .exec()
+        .then(order => {
+            if (!order) {
+                res.status(404).json({
+                    message: 'Order not found'
+                })
             }
+            res.status(200).json({
+                order: order,
+                request: {
+                    type: 'GET',
+                    url: 'http://localhost:3000/orders/'
+                }
+            })
         })
-    })
-    .catch(err=>{
-        res.status(200).json({
-            error:err
+        .catch(err => {
+            res.status(200).json({
+                error: err
+            })
         })
-    })
 
 });
 
 
 
-router.delete('/:orderId', (req, res, next) => {
-    Order.deleteOne({_id:req.params.orderId})
-    .exec()
-    .then(result=>{
-        res.status(200).json({
-            message:"Order delted successfully",
-            request: {
-                type: 'POST',
-                url: 'http://localhost:3000/orders/',
-                body:{
-                    productId:"ID",
-                    quantity:"Number"
+router.delete('/:orderId', checkAuth, (req, res, next) => {
+    Order.deleteOne({ _id: req.params.orderId })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: "Order delted successfully",
+                request: {
+                    type: 'POST',
+                    url: 'http://localhost:3000/orders/',
+                    body: {
+                        productId: "ID",
+                        quantity: "Number"
+                    }
                 }
-            }
+            })
         })
-    })
-    .catch(err=>{
-        res.status(200).json({
-            error:err
+        .catch(err => {
+            res.status(200).json({
+                error: err
+            })
         })
-    })
     // res.status(200).json({
     //     message: 'Deleted Order',
     //     id: req.params.orderId
