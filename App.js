@@ -10,6 +10,8 @@ const bodyParser = require('body-parser'); //It will help in request parsing
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+const userRoutes = require('./api/routes/users');
+
 
 const mongoose = require("mongoose");
 
@@ -38,6 +40,8 @@ app.use((req, res, next) => { //CORS
 })
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
+app.use('/users', userRoutes);
+
 
 //If our code execution reaches here it means above routes are not able to handle it
 //and we should  use error handling
@@ -47,7 +51,7 @@ app.use((req, res, next) => {
     error.status = 404;
     next(error)
 })
-
+ 
 //To handle DB error
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
